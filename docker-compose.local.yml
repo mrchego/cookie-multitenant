@@ -30,6 +30,8 @@ services:
       dockerfile: ./compose/production/postgres/Dockerfile
     image: cookie_multitenant_production_postgres
     container_name: cookie_multitenant_local_postgres
+    ports:
+    - "5433:5432"
     volumes:
       - cookie_multitenant_local_postgres_data:/var/lib/postgresql/18/docker
       - cookie_multitenant_local_postgres_data_backups:/backups

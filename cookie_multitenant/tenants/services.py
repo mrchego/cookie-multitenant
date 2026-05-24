@@ -1,12 +1,22 @@
-# tenants/services.py
-from cookie_multitenant.tenants.models import Tenant
+from tenant_users.tenants.tasks import provision_tenant
+
+from cookie_multitenant.tenants.models import Tenant, User
 
 
-def create_tenant_service(*, name: str, slug: str) -> Tenant:
-    tenant = Tenant.objects.create(
-        name=name,
-        slug=slug,
-        schema_name=slug,  # important: keeps django-tenants consistent
+def create_tenant_service(
+    *,
+    name: str,
+    slug: str,
+    owner: User,
+) -> Tenant:
+
+    tenant, domain = provision_tenant(
+        tenant_name=name,
+        tenant_slug=slug,
+        schema_name=slug,
+        owner=owner,
+        is_superuser=True,
+        is_staff=True,
     )
 
     return tenant

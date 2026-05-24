@@ -1,15 +1,22 @@
-import strawberry
+from tenant_users.tenants.tasks import provision_tenant
 
-from .services import create_tenant_service
+from cookie_multitenant.tenants.models import Tenant, User
 
 
-@strawberry.type
-class Mutation:
-    @strawberry.mutation
-    def create_tenant(self, name: str, slug: str) -> str:
-        tenant = create_tenant_service(
-            name=name,
-            slug=slug,
-        )
+def create_tenant_service(
+    *,
+    name: str,
+    slug: str,
+    owner: User,
+) -> Tenant:
 
-        return tenant.schema_name
+    tenant, domain = provision_tenant(
+        tenant_name=name,
+        tenant_slug=slug,
+        schema_name=slug,
+        owner=owner,
+        is_superuser=True,
+        is_staff=True,
+    )
+
+    return tenant
